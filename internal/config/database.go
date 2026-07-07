@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"myapp/internal/domain"
+	"golang.org/x/crypto/bcrypt"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -29,9 +31,26 @@ func ConnectDB() *gorm.DB {
 	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
 
 	// AutoMigrate models
-	err = db.AutoMigrate(&domain.Table{}, &domain.Menu{}, &domain.Order{}, &domain.OrderItem{})
+	err = db.AutoMigrate(
+		&domain.Admin{},
+		&domain.Table{},
+		&domain.Menu{},
+		&domain.Order{},
+		&domain.OrderItem{},
+	)
 	if err != nil {
-		log.Fatal("Failed to automigrate models:", err)
+		log.Fatal("Failed to automigrate models:" + err.Error())
+	}
+
+	// Seed Admin
+	var count int64
+	db.Model(&domain.Admin{}).Count(&count)
+	if count == 0 {
+		hash, _ := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+		db.Create(&domain.Admin{
+			Username:     "admin",
+			PasswordHash: string(hash),
+		})
 	}
 
 	return db

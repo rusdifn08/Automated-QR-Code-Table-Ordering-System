@@ -35,13 +35,15 @@ func main() {
 	menuRepo := repository.NewMenuRepository(db)
 	orderRepo := repository.NewOrderRepository(db)
 	tableRepo := repository.NewTableRepository(db)
+	adminRepo := repository.NewAdminRepository(db)
 
-	menuUC := usecase.NewMenuUsecase(menuRepo)
-	orderUC := usecase.NewOrderUsecase(orderRepo, menuRepo)
-	tableUC := usecase.NewTableUsecase(tableRepo)
+	menuUsecase := usecase.NewMenuUsecase(menuRepo)
+	orderUsecase := usecase.NewOrderUsecase(orderRepo, menuRepo)
+	tableUsecase := usecase.NewTableUsecase(tableRepo)
+	adminUsecase := usecase.NewAdminUsecase(adminRepo)
 
-	// Setup Routes
-	httpHandler.NewHttpHandler(app, menuUC, orderUC, tableUC)
+	handler := httpHandler.NewHttpHandler(menuUsecase, orderUsecase, tableUsecase, adminUsecase)
+	httpHandler.RegisterRoutes(app, handler)
 
 	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"status": "ok"})

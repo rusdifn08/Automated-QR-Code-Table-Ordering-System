@@ -2,6 +2,17 @@ package domain
 
 import "github.com/google/uuid"
 
+// AdminRepository defines the interface for Admin data access
+type AdminRepository interface {
+	GetByUsername(username string) (*Admin, error)
+	Create(admin *Admin) error
+}
+
+// AdminUsecase defines the interface for Admin business logic
+type AdminUsecase interface {
+	Login(username, password string) (string, error)
+}
+
 // MenuRepository defines the interface for Menu data access
 type MenuRepository interface {
 	GetAll() ([]Menu, error)

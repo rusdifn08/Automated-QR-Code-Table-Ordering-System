@@ -7,6 +7,15 @@ import (
 	"gorm.io/gorm"
 )
 
+// Admin Model
+type Admin struct {
+	ID           uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	Username     string    `gorm:"uniqueIndex;not null;type:varchar(255)" json:"username"`
+	PasswordHash string    `gorm:"not null" json:"-"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
 // Table Model
 type Table struct {
 	ID          uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
