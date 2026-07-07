@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/joho/godotenv"
 	"myapp/internal/config"
 	httpHandler "myapp/internal/delivery/http"
@@ -26,6 +27,9 @@ func main() {
 	app := fiber.New()
 	app.Use(logger.New())
 	app.Use(cors.New())
+
+	// Metrics dashboard
+	app.Get("/metrics", monitor.New(monitor.Config{Title: "MyMetrics Dashboard"}))
 
 	// Dependency Injection
 	menuRepo := repository.NewMenuRepository(db)

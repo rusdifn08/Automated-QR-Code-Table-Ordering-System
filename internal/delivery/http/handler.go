@@ -25,7 +25,10 @@ func NewHttpHandler(app *fiber.App, mu domain.MenuUsecase, ou domain.OrderUsecas
 
 	api.Get("/menus", handler.GetMenus)
 	api.Get("/tables/:number", handler.GetTable)
+	api.Post("/tables/:number/call-waiter", handler.CallWaiter)
+	api.Post("/tables/:number/resolve-assistance", handler.ResolveAssistance)
 	
+	api.Get("/orders", handler.GetAllOrders)
 	api.Post("/orders", handler.CreateOrder)
 	api.Get("/orders/:id", handler.GetOrder)
 	api.Patch("/orders/:id/status", handler.UpdateOrderStatus)
@@ -52,6 +55,40 @@ func (h *HttpHandler) GetTable(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(table)
+}
+
+func (h *HttpHandler) CallWaiter(c *fiber.Ctx) error {
+	numberStr := c.Params("number")
+	number, err := strconv.Atoi(numberStr)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid table number"})
+	}
+
+	if err := h.TableUsecase.CallWaiter(number); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"message": "Waiter called"})
+}
+
+func (h *HttpHandler) ResolveAssistance(c *fiber.Ctx) error {
+	numberStr := c.Params("number")
+	number, err := strconv.Atoi(numberStr)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid table number"})
+	}
+
+	if err := h.TableUsecase.ResolveAssistance(number); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"message": "Assistance resolved"})
+}
+
+func (h *HttpHandler) GetAllOrders(c *fiber.Ctx) error {
+	orders, err := h.OrderUsecase.GetAllOrders()
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(orders)
 }
 
 type createOrderRequest struct {

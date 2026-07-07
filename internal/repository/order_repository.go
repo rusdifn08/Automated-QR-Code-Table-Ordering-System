@@ -15,6 +15,12 @@ func NewOrderRepository(db *gorm.DB) domain.OrderRepository {
 	return &orderRepository{db}
 }
 
+func (o *orderRepository) GetAll() ([]domain.Order, error) {
+	var orders []domain.Order
+	err := o.db.Preload("Items.Menu").Order("created_at desc").Find(&orders).Error
+	return orders, err
+}
+
 func (o *orderRepository) Create(order *domain.Order) error {
 	return o.db.Create(order).Error
 }

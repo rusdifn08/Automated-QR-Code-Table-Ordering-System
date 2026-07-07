@@ -18,6 +18,10 @@ func NewOrderUsecase(or domain.OrderRepository, mr domain.MenuRepository) domain
 	}
 }
 
+func (o *orderUsecase) GetAllOrders() ([]domain.Order, error) {
+	return o.orderRepo.GetAll()
+}
+
 func (o *orderUsecase) CreateOrder(tableID uuid.UUID, items []domain.OrderItem) (*domain.Order, error) {
 	var totalAmount float64
 

@@ -17,3 +17,11 @@ func NewTableUsecase(repo domain.TableRepository) domain.TableUsecase {
 func (t *tableUsecase) GetTableByNumber(tableNumber int) (*domain.Table, error) {
 	return t.tableRepo.GetByNumber(tableNumber)
 }
+
+func (t *tableUsecase) CallWaiter(tableNumber int) error {
+	return t.tableRepo.UpdateAssistance(tableNumber, true)
+}
+
+func (t *tableUsecase) ResolveAssistance(tableNumber int) error {
+	return t.tableRepo.UpdateAssistance(tableNumber, false)
+}

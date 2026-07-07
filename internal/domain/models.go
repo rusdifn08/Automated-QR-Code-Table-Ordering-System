@@ -12,8 +12,9 @@ type Table struct {
 	ID          uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
 	TableNumber int       `gorm:"uniqueIndex;not null" json:"table_number"`
 	QRCodeURL   string    `gorm:"type:varchar(255)" json:"qr_code_url"`
-	Status      string    `gorm:"type:varchar(50);default:'available'" json:"status"` // available, occupied
-	CreatedAt   time.Time `json:"created_at"`
+	Status          string    `gorm:"type:varchar(50);default:'available'" json:"status"` // available, occupied
+	NeedsAssistance bool      `gorm:"default:false" json:"needs_assistance"`
+	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 

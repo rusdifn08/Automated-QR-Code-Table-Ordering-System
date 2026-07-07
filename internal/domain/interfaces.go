@@ -16,6 +16,7 @@ type MenuUsecase interface {
 
 // OrderRepository defines the interface for Order data access
 type OrderRepository interface {
+	GetAll() ([]Order, error)
 	Create(order *Order) error
 	GetByID(id uuid.UUID) (*Order, error)
 	UpdateStatus(id uuid.UUID, status string) error
@@ -23,6 +24,7 @@ type OrderRepository interface {
 
 // OrderUsecase defines the interface for Order business logic
 type OrderUsecase interface {
+	GetAllOrders() ([]Order, error)
 	CreateOrder(tableID uuid.UUID, items []OrderItem) (*Order, error)
 	GetOrder(id uuid.UUID) (*Order, error)
 	UpdateOrderStatus(id uuid.UUID, status string) error
@@ -32,9 +34,12 @@ type OrderUsecase interface {
 type TableRepository interface {
 	GetByNumber(tableNumber int) (*Table, error)
 	Create(table *Table) error
+	UpdateAssistance(tableNumber int, needsAssistance bool) error
 }
 
 // TableUsecase defines the interface for Table business logic
 type TableUsecase interface {
 	GetTableByNumber(tableNumber int) (*Table, error)
+	CallWaiter(tableNumber int) error
+	ResolveAssistance(tableNumber int) error
 }
