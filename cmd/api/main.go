@@ -11,6 +11,7 @@ import (
 	"github.com/joho/godotenv"
 	"myapp/internal/config"
 	httpHandler "myapp/internal/delivery/http"
+	monitorPkg "myapp/internal/monitor"
 	"myapp/internal/repository"
 	"myapp/internal/usecase"
 )
@@ -27,6 +28,7 @@ func main() {
 	app := fiber.New()
 	app.Use(logger.New())
 	app.Use(cors.New())
+	app.Use(monitorPkg.MetricsMiddleware())
 
 	// Metrics dashboard
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "MyMetrics Dashboard"}))

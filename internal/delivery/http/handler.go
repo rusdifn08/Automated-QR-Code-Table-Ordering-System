@@ -3,7 +3,7 @@ package http
 import (
 	"strconv"
 	"myapp/internal/domain"
-
+	monitorPkg "myapp/internal/monitor"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
@@ -41,6 +41,7 @@ func RegisterRoutes(app *fiber.App, handler *HttpHandler) {
 	adminApi := api.Group("/", handler.JWTMiddleware())
 	adminApi.Get("/orders", handler.GetAllOrders)
 	adminApi.Patch("/orders/:id/status", handler.UpdateOrderStatus)
+	adminApi.Get("/system-metrics", handler.GetSystemMetrics)
 }
 
 func (h *HttpHandler) JWTMiddleware() fiber.Handler {
@@ -129,6 +130,10 @@ func (h *HttpHandler) LoginAdmin(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"token": token})
+}
+
+func (h *HttpHandler) GetSystemMetrics(c *fiber.Ctx) error {
+	return c.JSON(monitorPkg.GetMetrics())
 }
 
 type createOrderRequest struct {
